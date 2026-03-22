@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:simp/core/item_provider.dart';
 import 'package:simp/core/theme.dart';
 
 class DashboardDesktop extends StatelessWidget {
@@ -6,6 +8,11 @@ class DashboardDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final itemProvider = Provider.of<ItemProvider>(context);
+    final total = itemProvider.itens.length;
+    final atrasados = itemProvider.itens.where((i) =>
+    i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now())).length;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(32),
@@ -17,26 +24,26 @@ class DashboardDesktop extends StatelessWidget {
 
             Row(
               children: [
-                _buildCard('Itens Disponíveis', '248', Icons.inventory_2, SimpTheme.azul),
+                _buildCard('Total de Itens', total.toString(), Icons.inventory_2, SimpTheme.azul),
                 const SizedBox(width: 20),
-                _buildCard('Solicitações Pendentes', '12', Icons.pending, SimpTheme.laranja),
+                _buildCard('Itens Atrasados', atrasados.toString(), Icons.warning, SimpTheme.vermelho),
                 const SizedBox(width: 20),
-                _buildCard('Itens Atrasados', '5', Icons.warning, SimpTheme.vermelho),
+                _buildCard('Pendentes', (total - atrasados).toString(), Icons.pending, SimpTheme.laranja),
               ],
             ),
             const SizedBox(height: 30),
 
-            const Text('Top 5 Itens Mais Solicitados', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView(
-                children: const [
-                  ListTile(leading: Icon(Icons.star), title: Text('Fios 2,5mm²'), trailing: Text('47 solicitações')),
-                  ListTile(leading: Icon(Icons.star), title: Text('Disjuntor 10A'), trailing: Text('32 solicitações')),
-                  ListTile(leading: Icon(Icons.star), title: Text('Lâmpada LED'), trailing: Text('28 solicitações')),
-                ],
+            if (atrasados > 0)
+              Card(
+                color: Colors.red.shade50,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    '⚠️ $atrasados itens estão ATRASADOS!',
+                    style: const TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
-            ),
           ],
         ),
       ),

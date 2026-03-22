@@ -9,16 +9,23 @@ import '../items/add_item.dart';
 import '../items/items_list.dart';
 import '../reports/reports.dart';
 
-class HomeMobile extends StatelessWidget {
+class HomeMobile extends StatefulWidget {
   const HomeMobile({super.key});
+
+  @override
+  State<HomeMobile> createState() => _HomeMobileState();
+}
+
+class _HomeMobileState extends State<HomeMobile> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ItemProvider>(context, listen: false).carregarItens();
+  }
 
   @override
   Widget build(BuildContext context) {
     final nav = Provider.of<NavigationProvider>(context);
-
-    // Carrega itens do Firebase + verifica atrasos automaticamente
-    final itemProvider = Provider.of<ItemProvider>(context, listen: false);
-    itemProvider.carregarItens();
 
     final List<Widget> pages = [
       const DashboardScreen(),
@@ -32,9 +39,7 @@ class HomeMobile extends StatelessWidget {
         title: const Text('SIMP', style: TextStyle(color: Colors.white)),
         backgroundColor: SimpTheme.azul,
       ),
-      drawer: const Drawer(
-        child: SidebarMobile(),
-      ),
+      drawer: const Drawer(child: SidebarMobile()),
       body: pages[nav.currentIndex],
     );
   }
