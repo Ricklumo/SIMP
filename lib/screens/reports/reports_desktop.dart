@@ -8,9 +8,11 @@ class ReportsDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itemProvider = Provider.of<ItemProvider>(context);
-    final total = itemProvider.itens.length;
-    final atrasados = itemProvider.itens.where((i) => i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now())).length;
+    final provider = Provider.of<ItemProvider>(context);
+    final total = provider.itens.length;
+    final atrasados = provider.itens
+        .where((i) => i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now()))
+        .length;
 
     return Scaffold(
       body: Padding(
@@ -23,22 +25,26 @@ class ReportsDesktop extends StatelessWidget {
 
             Row(
               children: [
-                _buildCard('Total Movimentações', total.toString(), Icons.swap_horiz, SimpTheme.azul),
+                _buildCard('Total de Itens', total.toString(), Icons.swap_horiz, SimpTheme.azul),
                 const SizedBox(width: 16),
                 _buildCard('Itens Atrasados', atrasados.toString(), Icons.warning, SimpTheme.vermelho),
               ],
             ),
             const SizedBox(height: 30),
 
-            const Text('Histórico', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('Histórico de Itens', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             Expanded(
               child: ListView.builder(
-                itemCount: itemProvider.itens.length,
+                itemCount: provider.itens.length,
                 itemBuilder: (context, i) {
-                  final item = itemProvider.itens[i];
+                  final item = provider.itens[i];
+                  final atrasado = item.dataLimite != null && item.dataLimite!.isBefore(DateTime.now());
                   return ListTile(
                     title: Text(item.nome),
-                    subtitle: Text('${item.solicitante} • ${item.dataLimite != null ? item.dataLimite!.day.toString() : ''}'),
+                    subtitle: Text('${item.solicitante} • ${item.quantidade} un'),
+                    trailing: atrasado
+                        ? const Icon(Icons.warning, color: Colors.red)
+                        : const Icon(Icons.check_circle, color: Colors.green),
                   );
                 },
               ),
@@ -54,7 +60,13 @@ class ReportsDesktop extends StatelessWidget {
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Column(children: [Icon(icon, size: 40, color: cor), Text(valor, style: const TextStyle(fontSize: 32)), Text(titulo)]),
+          child: Column(
+            children: [
+              Icon(icon, size: 40, color: cor),
+              Text(valor, style: const TextStyle(fontSize: 32)),
+              Text(titulo),
+            ],
+          ),
         ),
       ),
     );

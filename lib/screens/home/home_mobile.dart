@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simp/core/item_provider.dart';
-import 'package:simp/core/navigation_provider.dart';
+import 'package:simp/core/providers.dart';
 import 'package:simp/core/theme.dart';
 import 'package:simp/widgets/sidebar_mobile.dart';
 import '../dashboard/dashboard.dart';

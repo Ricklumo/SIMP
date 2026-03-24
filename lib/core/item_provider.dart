@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:simp/database/database_helper.dart';
-import 'package:sqflite/sqflite.dart';
 
 class Item {
   final String id;
@@ -27,6 +26,7 @@ class ItemProvider extends ChangeNotifier {
 
   List<Item> get itens => _itens;
 
+  /// Carrega todos os itens do SQLite
   Future<void> carregarItens() async {
     final db = await DatabaseHelper.database;
     final maps = await db.query('itens');
@@ -48,8 +48,10 @@ class ItemProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Adiciona item e recarrega tudo do banco (garantia de atualização)
   Future<void> adicionarItem(Item item) async {
     final db = await DatabaseHelper.database;
+
     await db.insert('itens', {
       'id': item.id,
       'nome': item.nome,
@@ -60,7 +62,7 @@ class ItemProvider extends ChangeNotifier {
       'observacao': item.observacao,
     });
 
-    _itens.add(item);
-    notifyListeners();
+    // Recarrega tudo do banco para garantir que todas as telas atualizem
+    await carregarItens();
   }
 }

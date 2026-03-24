@@ -11,10 +11,7 @@ class HomeScreen extends StatelessWidget {
     if (isDesktop(context)) {
       return const HomeDesktop();
     } else {
-      return const Scaffold(
-        drawer: Drawer(child: Text('Menu Mobile')),
-        body: HomeMobile(),
-      );
+      return const HomeMobile();
     }
   }
 }

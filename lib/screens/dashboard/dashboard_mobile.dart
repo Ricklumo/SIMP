@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:simp/core/item_provider.dart';
 import 'package:simp/core/theme.dart';
 
 class DashboardMobile extends StatelessWidget {
@@ -6,23 +8,33 @@ class DashboardMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ItemProvider>(context);
+    final total = provider.itens.length;
+    final atrasados = provider.itens
+        .where((i) => i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now()))
+        .length;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard', style: TextStyle(color: Colors.white),)),
+      appBar: AppBar(title: const Text('Dashboard')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            _buildCard('Itens Disponíveis', '248', Icons.inventory_2, SimpTheme.azul),
+            _buildCard('Total de Itens', total.toString(), Icons.inventory_2, SimpTheme.azul),
             const SizedBox(height: 12),
-            _buildCard('Solicitações Pendentes', '12', Icons.pending, SimpTheme.laranja),
+            _buildCard('Itens Atrasados', atrasados.toString(), Icons.warning, SimpTheme.vermelho),
             const SizedBox(height: 12),
-            _buildCard('Itens Atrasados', '5', Icons.warning, SimpTheme.vermelho),
-            const SizedBox(height: 30),
+            _buildCard('Pendentes', (total - atrasados).toString(), Icons.pending, SimpTheme.laranja),
 
-            const Text('Top 5 Itens Mais Solicitados', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const ListTile(leading: Icon(Icons.star), title: Text('Fios 2,5mm²'), trailing: Text('47')),
-            const ListTile(leading: Icon(Icons.star), title: Text('Disjuntor 10A'), trailing: Text('32')),
-            const ListTile(leading: Icon(Icons.star), title: Text('Lâmpada LED'), trailing: Text('28')),
+            if (atrasados > 0)
+              Card(
+                color: Colors.red.shade50,
+                margin: const EdgeInsets.only(top: 20),
+                child: ListTile(
+                  leading: const Icon(Icons.warning, color: Colors.red, size: 32),
+                  title: Text('$atrasados itens atrasados!', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                ),
+              ),
           ],
         ),
       ),

@@ -7,6 +7,6 @@ class NavigationProvider extends ChangeNotifier {
 
   void changePage(int index) {
     _currentIndex = index;
-    notifyListeners();   // ← isso faz desktop e mobile atualizarem juntos
+    notifyListeners();
   }
 }

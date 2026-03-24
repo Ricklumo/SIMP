@@ -8,10 +8,11 @@ class DashboardDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itemProvider = Provider.of<ItemProvider>(context);
-    final total = itemProvider.itens.length;
-    final atrasados = itemProvider.itens.where((i) =>
-    i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now())).length;
+    final provider = Provider.of<ItemProvider>(context);
+    final total = provider.itens.length;
+    final atrasados = provider.itens
+        .where((i) => i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now()))
+        .length;
 
     return Scaffold(
       body: Padding(
@@ -38,9 +39,15 @@ class DashboardDesktop extends StatelessWidget {
                 color: Colors.red.shade50,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Text(
-                    '⚠️ $atrasados itens estão ATRASADOS!',
-                    style: const TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.bold),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.warning, color: Colors.red, size: 32),
+                      const SizedBox(width: 12),
+                      Text(
+                        '$atrasados itens estão ATRASADOS!',
+                        style: const TextStyle(fontSize: 20, color: Colors.red, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                 ),
               ),

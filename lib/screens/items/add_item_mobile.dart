@@ -84,7 +84,7 @@ class _AddItemMobileState extends State<AddItemMobile> {
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: () {
+              onPressed: () async {                     // ← ASYNC AQUI
                 if (nome.trim().isEmpty) return;
 
                 final item = Item(
@@ -97,13 +97,13 @@ class _AddItemMobileState extends State<AddItemMobile> {
                   observacao: observacao,
                 );
 
-                Provider.of<ItemProvider>(context, listen: false).adicionarItem(item);
+                await Provider.of<ItemProvider>(context, listen: false)
+                    .adicionarItem(item);               // ← await
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Item cadastrado com sucesso! 🎉'), backgroundColor: Colors.green),
                 );
 
-                // Limpa o formulário
                 setState(() {
                   nome = '';
                   categoria = 'Fios';
