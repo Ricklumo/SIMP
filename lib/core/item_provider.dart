@@ -9,6 +9,7 @@ class Item {
   final DateTime? dataLimite;
   final String solicitante;
   final String observacao;
+  final String status;
 
   Item({
     required this.id,
@@ -18,7 +19,21 @@ class Item {
     this.dataLimite,
     required this.solicitante,
     required this.observacao,
+    this.status = 'pendente',
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nome': nome,
+      'categoria': categoria,
+      'quantidade': quantidade,
+      'dataLimite': dataLimite?.toIso8601String(),
+      'solicitante': solicitante,
+      'observacao': observacao,
+      'status': status,
+    };
+  }
 }
 
 class ItemProvider extends ChangeNotifier {
@@ -26,7 +41,6 @@ class ItemProvider extends ChangeNotifier {
 
   List<Item> get itens => _itens;
 
-  /// Carrega todos os itens do SQLite
   Future<void> carregarItens() async {
     final db = await DatabaseHelper.database;
     final maps = await db.query('itens');
@@ -38,31 +52,39 @@ class ItemProvider extends ChangeNotifier {
         nome: map['nome'] as String,
         categoria: map['categoria'] as String,
         quantidade: map['quantidade'] as int,
-        dataLimite: map['dataLimite'] != null
-            ? DateTime.parse(map['dataLimite'] as String)
-            : null,
+        dataLimite: map['dataLimite'] != null ? DateTime.parse(map['dataLimite'] as String) : null,
         solicitante: map['solicitante'] as String,
         observacao: map['observacao'] as String,
+        status: map['status'] as String? ?? 'pendente',
       ));
     }
     notifyListeners();
   }
 
-  /// Adiciona item e recarrega tudo do banco (garantia de atualização)
   Future<void> adicionarItem(Item item) async {
     final db = await DatabaseHelper.database;
+    await db.insert('itens', item.toMap());
+    await carregarItens();
+  }
 
-    await db.insert('itens', {
-      'id': item.id,
-      'nome': item.nome,
-      'categoria': item.categoria,
-      'quantidade': item.quantidade,
-      'dataLimite': item.dataLimite?.toIso8601String(),
-      'solicitante': item.solicitante,
-      'observacao': item.observacao,
-    });
+  // Novo: Atualiza um item completo (usado no editar)
+  Future<void> atualizarItem(Item item) async {
+    final db = await DatabaseHelper.database;
+    await db.update('itens', item.toMap(), where: 'id = ?', whereArgs: [item.id]);
+    await carregarItens();
+  }
 
-    // Recarrega tudo do banco para garantir que todas as telas atualizem
+  // Novo: Muda o status (concluído / pendente)
+  Future<void> atualizarStatus(String id, String novoStatus) async {
+    final db = await DatabaseHelper.database;
+    await db.update('itens', {'status': novoStatus}, where: 'id = ?', whereArgs: [id]);
+    await carregarItens();
+  }
+
+  // Novo: Exclui um item
+  Future<void> deletarItem(String id) async {
+    final db = await DatabaseHelper.database;
+    await db.delete('itens', where: 'id = ?', whereArgs: [id]);
     await carregarItens();
   }
 }

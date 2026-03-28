@@ -29,7 +29,7 @@ class _HomeDesktopState extends State<HomeDesktop> {
     final List<Widget> pages = [
       const DashboardScreen(),
       const AddItemScreen(),
-      const ItemsListScreen(),
+      ItemsListScreen(),
       const ReportsScreen(),
     ];
 

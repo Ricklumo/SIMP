@@ -30,7 +30,7 @@ class _HomeMobileState extends State<HomeMobile> {
     final List<Widget> pages = [
       const DashboardScreen(),
       const AddItemScreen(),
-      const ItemsListScreen(),
+      ItemsListScreen(),
       const ReportsScreen(),
     ];
 

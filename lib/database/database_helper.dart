@@ -19,16 +19,17 @@ class DatabaseHelper {
       version: 1,
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE itens (
-            id TEXT PRIMARY KEY,
-            nome TEXT,
-            categoria TEXT,
-            quantidade INTEGER,
-            dataLimite TEXT,
-            solicitante TEXT,
-            observacao TEXT
-          )
-        ''');
+  CREATE TABLE itens (
+    id TEXT PRIMARY KEY,
+    nome TEXT,
+    categoria TEXT,
+    quantidade INTEGER,
+    dataLimite TEXT,
+    solicitante TEXT,
+    observacao TEXT,
+    status TEXT DEFAULT 'pendente'
+  )
+''');
       },
     );
   }

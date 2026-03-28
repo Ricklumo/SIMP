@@ -42,9 +42,14 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
                   child: ListTile(
                     title: Text(item.nome, style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text('${item.solicitante} • ${item.quantidade} un'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.qr_code, color: Colors.blue, size: 32),
-                      onPressed: () => _showQRDialog(context, item),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () => _editItem(context, item)),
+                        IconButton(icon: const Icon(Icons.check_circle, color: Colors.green), onPressed: () => _toggleStatus(context, item)),
+                        IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => _deleteItem(context, item.id)),
+                        IconButton(icon: const Icon(Icons.qr_code, color: Colors.orange), onPressed: () => _showQRDialog(context, item)),
+                      ],
                     ),
                   ),
                 );
@@ -56,9 +61,74 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
     );
   }
 
-  void _showQRDialog(BuildContext context, Item item) {
-    print('🔄 Abrindo QR Code para: ${item.nome}');
+  void _toggleStatus(BuildContext context, Item item) async {
+    final novoStatus = item.status == 'concluido' ? 'pendente' : 'concluido';
+    await Provider.of<ItemProvider>(context, listen: false).atualizarStatus(item.id, novoStatus);
+  }
 
+  void _deleteItem(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Excluir Item'),
+        content: const Text('Tem certeza?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              await Provider.of<ItemProvider>(context, listen: false).deletarItem(id);
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item excluído')));
+            },
+            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _editItem(BuildContext context, Item item) {
+    // Mesmo diálogo simples do desktop
+    final nomeCtrl = TextEditingController(text: item.nome);
+    final qtdCtrl = TextEditingController(text: item.quantidade.toString());
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Editar Item'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(controller: nomeCtrl, decoration: const InputDecoration(labelText: 'Nome')),
+            TextField(controller: qtdCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Quantidade')),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final updated = Item(
+                id: item.id,
+                nome: nomeCtrl.text,
+                categoria: item.categoria,
+                quantidade: int.tryParse(qtdCtrl.text) ?? item.quantidade,
+                dataLimite: item.dataLimite,
+                solicitante: item.solicitante,
+                observacao: item.observacao,
+                status: item.status,
+              );
+              await Provider.of<ItemProvider>(context, listen: false).atualizarItem(updated);
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item atualizado!')));
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showQRDialog(BuildContext context, Item item) {
     showDialog(
       context: context,
       builder: (ctx) => Dialog(
@@ -72,20 +142,10 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
               Container(
                 color: Colors.white,
                 padding: const EdgeInsets.all(15),
-                child: QrImageView(
-                  data: item.id,
-                  size: 200,
-                  backgroundColor: Colors.white,
-                  gapless: true,
-                ),
+                child: QrImageView(data: item.id, size: 200),
               ),
-              const SizedBox(height: 10),
-              Text('ID: ${item.id}', style: const TextStyle(fontSize: 12)),
               const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Fechar'),
-              ),
+              ElevatedButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fechar')),
             ],
           ),
         ),

@@ -4,8 +4,14 @@ import 'package:simp/core/item_provider.dart';
 import 'package:simp/core/providers.dart';
 import 'package:simp/core/theme.dart';
 import 'package:simp/screens/home/home.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';   // ← novo
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicialização obrigatória para Windows
+  databaseFactory = databaseFactoryFfi;
+
   runApp(
     MultiProvider(
       providers: [
