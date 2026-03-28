@@ -8,6 +8,8 @@ class ItemsListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isDesktop(context) ? const ItemsListDesktop() : const ItemsListMobile();
+    return isDesktop(context)
+        ? const ItemsListDesktop()
+        : const ItemsListMobile();
   }
 }

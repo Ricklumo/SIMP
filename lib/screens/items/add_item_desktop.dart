@@ -26,7 +26,10 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('➕ Novo Item', style: Theme.of(context).textTheme.headlineMedium),
+            Text(
+              '➕ Novo Item',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
             const SizedBox(height: 30),
 
             TextFormField(
@@ -37,9 +40,13 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
 
             DropdownButtonFormField<String>(
               value: categoria,
-              items: ['Fios', 'Disjuntores', 'Lâmpadas', 'Tomadas', 'Outros']
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
+              items: [
+                'Fios',
+                'Disjuntores',
+                'Lâmpadas',
+                'Tomadas',
+                'Outros',
+              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => categoria = v!),
               decoration: const InputDecoration(labelText: 'Categoria'),
             ),
@@ -66,10 +73,14 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
                       );
                       if (data != null) setState(() => dataLimite = data);
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: SimpTheme.laranja),
-                    child: Text(dataLimite == null
-                        ? 'Selecionar Data Limite'
-                        : 'Data Limite: ${dataLimite!.day}/${dataLimite!.month}/${dataLimite!.year}'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: SimpTheme.laranja,
+                    ),
+                    child: Text(
+                      dataLimite == null
+                          ? 'Selecionar Data Limite'
+                          : 'Data Limite: ${dataLimite!.day}/${dataLimite!.month}/${dataLimite!.year}',
+                    ),
                   ),
                 ),
               ],
@@ -97,7 +108,8 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
                   backgroundColor: SimpTheme.azul,
                   foregroundColor: Colors.white,
                 ),
-                onPressed: () async {                    // ← ASYNC AQUI
+                onPressed: () async {
+                  // ← ASYNC AQUI
                   if (nome.trim().isEmpty) return;
 
                   final item = Item(
@@ -110,11 +122,16 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
                     observacao: observacao,
                   );
 
-                  await Provider.of<ItemProvider>(context, listen: false)
-                      .adicionarItem(item);               // ← await
+                  await Provider.of<ItemProvider>(
+                    context,
+                    listen: false,
+                  ).adicionarItem(item); // ← await
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Item cadastrado com sucesso! 🎉'), backgroundColor: Colors.green),
+                    const SnackBar(
+                      content: Text('Item cadastrado com sucesso! 🎉'),
+                      backgroundColor: Colors.green,
+                    ),
                   );
 
                   setState(() {
@@ -126,7 +143,10 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
                     observacao = '';
                   });
                 },
-                child: const Text('Cadastrar Item', style: TextStyle(fontSize: 18)),
+                child: const Text(
+                  'Cadastrar Item',
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
             ),
           ],

@@ -34,7 +34,10 @@ class Sidebar extends StatelessWidget {
     final isSelected = index == selectedIndex;
     return ListTile(
       leading: Icon(icon, color: isSelected ? Colors.white : Colors.white70),
-      title: Text(title, style: TextStyle(color: isSelected ? Colors.white : Colors.white70)),
+      title: Text(
+        title,
+        style: TextStyle(color: isSelected ? Colors.white : Colors.white70),
+      ),
       selected: isSelected,
       onTap: () => onItemSelected(index),
     );

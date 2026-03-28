@@ -47,16 +47,20 @@ class ItemProvider extends ChangeNotifier {
 
     _itens.clear();
     for (var map in maps) {
-      _itens.add(Item(
-        id: map['id'] as String,
-        nome: map['nome'] as String,
-        categoria: map['categoria'] as String,
-        quantidade: map['quantidade'] as int,
-        dataLimite: map['dataLimite'] != null ? DateTime.parse(map['dataLimite'] as String) : null,
-        solicitante: map['solicitante'] as String,
-        observacao: map['observacao'] as String,
-        status: map['status'] as String? ?? 'pendente',
-      ));
+      _itens.add(
+        Item(
+          id: map['id'] as String,
+          nome: map['nome'] as String,
+          categoria: map['categoria'] as String,
+          quantidade: map['quantidade'] as int,
+          dataLimite: map['dataLimite'] != null
+              ? DateTime.parse(map['dataLimite'] as String)
+              : null,
+          solicitante: map['solicitante'] as String,
+          observacao: map['observacao'] as String,
+          status: map['status'] as String? ?? 'pendente',
+        ),
+      );
     }
     notifyListeners();
   }
@@ -70,14 +74,24 @@ class ItemProvider extends ChangeNotifier {
   // Novo: Atualiza um item completo (usado no editar)
   Future<void> atualizarItem(Item item) async {
     final db = await DatabaseHelper.database;
-    await db.update('itens', item.toMap(), where: 'id = ?', whereArgs: [item.id]);
+    await db.update(
+      'itens',
+      item.toMap(),
+      where: 'id = ?',
+      whereArgs: [item.id],
+    );
     await carregarItens();
   }
 
   // Novo: Muda o status (concluído / pendente)
   Future<void> atualizarStatus(String id, String novoStatus) async {
     final db = await DatabaseHelper.database;
-    await db.update('itens', {'status': novoStatus}, where: 'id = ?', whereArgs: [id]);
+    await db.update(
+      'itens',
+      {'status': novoStatus},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
     await carregarItens();
   }
 

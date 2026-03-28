@@ -11,7 +11,9 @@ class ReportsDesktop extends StatelessWidget {
     final provider = Provider.of<ItemProvider>(context);
     final total = provider.itens.length;
     final atrasados = provider.itens
-        .where((i) => i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now()))
+        .where(
+          (i) => i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now()),
+        )
         .length;
 
     return Scaffold(
@@ -20,28 +22,48 @@ class ReportsDesktop extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('📄 Relatórios', style: Theme.of(context).textTheme.headlineMedium),
+            Text(
+              '📄 Relatórios',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
             const SizedBox(height: 30),
 
             Row(
               children: [
-                _buildCard('Total de Itens', total.toString(), Icons.swap_horiz, SimpTheme.azul),
+                _buildCard(
+                  'Total de Itens',
+                  total.toString(),
+                  Icons.swap_horiz,
+                  SimpTheme.azul,
+                ),
                 const SizedBox(width: 16),
-                _buildCard('Itens Atrasados', atrasados.toString(), Icons.warning, SimpTheme.vermelho),
+                _buildCard(
+                  'Itens Atrasados',
+                  atrasados.toString(),
+                  Icons.warning,
+                  SimpTheme.vermelho,
+                ),
               ],
             ),
             const SizedBox(height: 30),
 
-            const Text('Histórico de Itens', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text(
+              'Histórico de Itens',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: provider.itens.length,
                 itemBuilder: (context, i) {
                   final item = provider.itens[i];
-                  final atrasado = item.dataLimite != null && item.dataLimite!.isBefore(DateTime.now());
+                  final atrasado =
+                      item.dataLimite != null &&
+                      item.dataLimite!.isBefore(DateTime.now());
                   return ListTile(
                     title: Text(item.nome),
-                    subtitle: Text('${item.solicitante} • ${item.quantidade} un'),
+                    subtitle: Text(
+                      '${item.solicitante} • ${item.quantidade} un',
+                    ),
                     trailing: atrasado
                         ? const Icon(Icons.warning, color: Colors.red)
                         : const Icon(Icons.check_circle, color: Colors.green),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';           // ← novo
+import 'package:flutter/services.dart'; // ← novo
 import 'package:provider/provider.dart';
 import 'package:simp/core/providers.dart';
 import 'package:simp/core/theme.dart';
@@ -31,11 +31,11 @@ class SidebarMobile extends StatelessWidget {
   }
 
   Widget _buildItem(
-      BuildContext context,
-      IconData icon,
-      String title,
-      int index,
-      ) {
+    BuildContext context,
+    IconData icon,
+    String title,
+    int index,
+  ) {
     return ListTile(
       leading: Icon(icon, color: Colors.white, size: 28),
       title: Text(

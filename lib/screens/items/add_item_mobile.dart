@@ -34,9 +34,13 @@ class _AddItemMobileState extends State<AddItemMobile> {
 
             DropdownButtonFormField<String>(
               value: categoria,
-              items: ['Fios', 'Disjuntores', 'Lâmpadas', 'Tomadas', 'Outros']
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
+              items: [
+                'Fios',
+                'Disjuntores',
+                'Lâmpadas',
+                'Tomadas',
+                'Outros',
+              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => setState(() => categoria = v!),
               decoration: const InputDecoration(labelText: 'Categoria'),
             ),
@@ -59,9 +63,11 @@ class _AddItemMobileState extends State<AddItemMobile> {
                 );
                 if (data != null) setState(() => dataLimite = data);
               },
-              child: Text(dataLimite == null
-                  ? 'Selecionar Data Limite'
-                  : 'Data Limite: ${dataLimite!.day}/${dataLimite!.month}/${dataLimite!.year}'),
+              child: Text(
+                dataLimite == null
+                    ? 'Selecionar Data Limite'
+                    : 'Data Limite: ${dataLimite!.day}/${dataLimite!.month}/${dataLimite!.year}',
+              ),
             ),
             const SizedBox(height: 12),
 
@@ -84,7 +90,8 @@ class _AddItemMobileState extends State<AddItemMobile> {
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: () async {                     // ← ASYNC AQUI
+              onPressed: () async {
+                // ← ASYNC AQUI
                 if (nome.trim().isEmpty) return;
 
                 final item = Item(
@@ -97,11 +104,16 @@ class _AddItemMobileState extends State<AddItemMobile> {
                   observacao: observacao,
                 );
 
-                await Provider.of<ItemProvider>(context, listen: false)
-                    .adicionarItem(item);               // ← await
+                await Provider.of<ItemProvider>(
+                  context,
+                  listen: false,
+                ).adicionarItem(item); // ← await
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Item cadastrado com sucesso! 🎉'), backgroundColor: Colors.green),
+                  const SnackBar(
+                    content: Text('Item cadastrado com sucesso! 🎉'),
+                    backgroundColor: Colors.green,
+                  ),
                 );
 
                 setState(() {
@@ -113,7 +125,10 @@ class _AddItemMobileState extends State<AddItemMobile> {
                   observacao = '';
                 });
               },
-              child: const Text('Cadastrar Item', style: TextStyle(fontSize: 18)),
+              child: const Text(
+                'Cadastrar Item',
+                style: TextStyle(fontSize: 18),
+              ),
             ),
           ],
         ),

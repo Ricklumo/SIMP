@@ -26,7 +26,10 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
           Padding(
             padding: const EdgeInsets.all(12),
             child: TextField(
-              decoration: const InputDecoration(labelText: 'Buscar...', prefixIcon: Icon(Icons.search)),
+              decoration: const InputDecoration(
+                labelText: 'Buscar...',
+                prefixIcon: Icon(Icons.search),
+              ),
               onChanged: (v) => setState(() => search = v),
             ),
           ),
@@ -35,20 +38,44 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
               itemCount: itens.length,
               itemBuilder: (context, i) {
                 final item = itens[i];
-                if (!item.nome.toLowerCase().contains(search.toLowerCase())) return const SizedBox();
+                if (!item.nome.toLowerCase().contains(search.toLowerCase()))
+                  return const SizedBox();
 
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   child: ListTile(
-                    title: Text(item.nome, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text('${item.solicitante} • ${item.quantidade} un'),
+                    title: Text(
+                      item.nome,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      '${item.solicitante} • ${item.quantidade} un',
+                    ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () => _editItem(context, item)),
-                        IconButton(icon: const Icon(Icons.check_circle, color: Colors.green), onPressed: () => _toggleStatus(context, item)),
-                        IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => _deleteItem(context, item.id)),
-                        IconButton(icon: const Icon(Icons.qr_code, color: Colors.orange), onPressed: () => _showQRDialog(context, item)),
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () => _editItem(context, item),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                          ),
+                          onPressed: () => _toggleStatus(context, item),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _deleteItem(context, item.id),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.qr_code, color: Colors.orange),
+                          onPressed: () => _showQRDialog(context, item),
+                        ),
                       ],
                     ),
                   ),
@@ -63,7 +90,10 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
 
   void _toggleStatus(BuildContext context, Item item) async {
     final novoStatus = item.status == 'concluido' ? 'pendente' : 'concluido';
-    await Provider.of<ItemProvider>(context, listen: false).atualizarStatus(item.id, novoStatus);
+    await Provider.of<ItemProvider>(
+      context,
+      listen: false,
+    ).atualizarStatus(item.id, novoStatus);
   }
 
   void _deleteItem(BuildContext context, String id) {
@@ -73,12 +103,20 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
         title: const Text('Excluir Item'),
         content: const Text('Tem certeza?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
           TextButton(
             onPressed: () async {
               Navigator.pop(ctx);
-              await Provider.of<ItemProvider>(context, listen: false).deletarItem(id);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item excluído')));
+              await Provider.of<ItemProvider>(
+                context,
+                listen: false,
+              ).deletarItem(id);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Item excluído')));
             },
             child: const Text('Excluir', style: TextStyle(color: Colors.red)),
           ),
@@ -99,12 +137,22 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: nomeCtrl, decoration: const InputDecoration(labelText: 'Nome')),
-            TextField(controller: qtdCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Quantidade')),
+            TextField(
+              controller: nomeCtrl,
+              decoration: const InputDecoration(labelText: 'Nome'),
+            ),
+            TextField(
+              controller: qtdCtrl,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Quantidade'),
+            ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
           TextButton(
             onPressed: () async {
               Navigator.pop(ctx);
@@ -118,8 +166,13 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
                 observacao: item.observacao,
                 status: item.status,
               );
-              await Provider.of<ItemProvider>(context, listen: false).atualizarItem(updated);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item atualizado!')));
+              await Provider.of<ItemProvider>(
+                context,
+                listen: false,
+              ).atualizarItem(updated);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Item atualizado!')));
             },
             child: const Text('Salvar'),
           ),
@@ -137,7 +190,13 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('QR Code - ${item.nome}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                'QR Code - ${item.nome}',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 15),
               Container(
                 color: Colors.white,
@@ -145,7 +204,10 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
                 child: QrImageView(data: item.id, size: 200),
               ),
               const SizedBox(height: 15),
-              ElevatedButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fechar')),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Fechar'),
+              ),
             ],
           ),
         ),

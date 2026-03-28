@@ -4,7 +4,7 @@ import 'package:simp/core/item_provider.dart';
 import 'package:simp/core/providers.dart';
 import 'package:simp/core/theme.dart';
 import 'package:simp/screens/home/home.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';   // ← novo
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
