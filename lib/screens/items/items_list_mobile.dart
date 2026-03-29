@@ -126,27 +126,39 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
   }
 
   void _editItem(BuildContext context, Item item) {
-    // Mesmo diálogo simples do desktop
     final nomeCtrl = TextEditingController(text: item.nome);
     final qtdCtrl = TextEditingController(text: item.quantidade.toString());
+    final solicitanteCtrl = TextEditingController(text: item.solicitante);
+    final obsCtrl = TextEditingController(text: item.observacao);
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Editar Item'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nomeCtrl,
-              decoration: const InputDecoration(labelText: 'Nome'),
-            ),
-            TextField(
-              controller: qtdCtrl,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Quantidade'),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nomeCtrl,
+                decoration: const InputDecoration(labelText: 'Nome'),
+              ),
+              TextField(
+                controller: qtdCtrl,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Quantidade'),
+              ),
+              TextField(
+                controller: solicitanteCtrl,
+                decoration: const InputDecoration(labelText: 'Solicitante'),
+              ),
+              TextField(
+                controller: obsCtrl,
+                decoration: const InputDecoration(labelText: 'Observação'),
+                maxLines: 2,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -156,20 +168,20 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
           TextButton(
             onPressed: () async {
               Navigator.pop(ctx);
-              final updated = Item(
+              final updatedItem = Item(
                 id: item.id,
                 nome: nomeCtrl.text,
                 categoria: item.categoria,
                 quantidade: int.tryParse(qtdCtrl.text) ?? item.quantidade,
                 dataLimite: item.dataLimite,
-                solicitante: item.solicitante,
-                observacao: item.observacao,
+                solicitante: solicitanteCtrl.text,
+                observacao: obsCtrl.text,
                 status: item.status,
               );
               await Provider.of<ItemProvider>(
                 context,
                 listen: false,
-              ).atualizarItem(updated);
+              ).atualizarItem(updatedItem);
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(const SnackBar(content: Text('Item atualizado!')));

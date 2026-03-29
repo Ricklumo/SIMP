@@ -8,63 +8,68 @@ class DashboardMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ItemProvider>(context);
-    final total = provider.itens.length;
-    final atrasados = provider.itens
-        .where(
-          (i) => i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now()),
-        )
-        .length;
+    return Consumer<ItemProvider>(
+      builder: (context, provider, child) {
+        final total = provider.itens.length;
+        final atrasados = provider.itens
+            .where(
+              (i) =>
+                  i.dataLimite != null &&
+                  i.dataLimite!.isBefore(DateTime.now()),
+            )
+            .length;
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            _buildCard(
-              'Total de Itens',
-              total.toString(),
-              Icons.inventory_2,
-              SimpTheme.azul,
-            ),
-            const SizedBox(height: 12),
-            _buildCard(
-              'Itens Atrasados',
-              atrasados.toString(),
-              Icons.warning,
-              SimpTheme.vermelho,
-            ),
-            const SizedBox(height: 12),
-            _buildCard(
-              'Pendentes',
-              (total - atrasados).toString(),
-              Icons.pending,
-              SimpTheme.laranja,
-            ),
+        return Scaffold(
+          appBar: AppBar(title: const Text('Dashboard')),
+          body: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ListView(
+              children: [
+                _buildCard(
+                  'Total de Itens',
+                  total.toString(),
+                  Icons.inventory_2,
+                  SimpTheme.azul,
+                ),
+                const SizedBox(height: 12),
+                _buildCard(
+                  'Itens Atrasados',
+                  atrasados.toString(),
+                  Icons.warning,
+                  SimpTheme.vermelho,
+                ),
+                const SizedBox(height: 12),
+                _buildCard(
+                  'Pendentes',
+                  (total - atrasados).toString(),
+                  Icons.pending,
+                  SimpTheme.laranja,
+                ),
 
-            if (atrasados > 0)
-              Card(
-                color: Colors.red.shade50,
-                margin: const EdgeInsets.only(top: 20),
-                child: ListTile(
-                  leading: const Icon(
-                    Icons.warning,
-                    color: Colors.red,
-                    size: 32,
-                  ),
-                  title: Text(
-                    '$atrasados itens atrasados!',
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
+                if (atrasados > 0)
+                  Card(
+                    color: Colors.red.shade50,
+                    margin: const EdgeInsets.only(top: 20),
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.warning,
+                        color: Colors.red,
+                        size: 32,
+                      ),
+                      title: Text(
+                        '$atrasados itens atrasados!',
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-          ],
-        ),
-      ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

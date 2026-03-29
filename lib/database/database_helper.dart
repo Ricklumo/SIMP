@@ -16,20 +16,27 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // ← aumentamos a versão
       onCreate: (db, version) async {
         await db.execute('''
-  CREATE TABLE itens (
-    id TEXT PRIMARY KEY,
-    nome TEXT,
-    categoria TEXT,
-    quantidade INTEGER,
-    dataLimite TEXT,
-    solicitante TEXT,
-    observacao TEXT,
-    status TEXT DEFAULT 'pendente'
-  )
-''');
+          CREATE TABLE itens (
+            id TEXT PRIMARY KEY,
+            nome TEXT,
+            categoria TEXT,
+            quantidade INTEGER,
+            dataLimite TEXT,
+            solicitante TEXT,
+            observacao TEXT,
+            status TEXT DEFAULT 'pendente'
+          )
+        ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute(
+            'ALTER TABLE itens ADD COLUMN status TEXT DEFAULT "pendente"',
+          );
+        }
       },
     );
   }

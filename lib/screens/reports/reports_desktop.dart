@@ -11,9 +11,7 @@ class ReportsDesktop extends StatelessWidget {
     final provider = Provider.of<ItemProvider>(context);
     final total = provider.itens.length;
     final atrasados = provider.itens
-        .where(
-          (i) => i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now()),
-        )
+        .where((i) => i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now()))
         .length;
 
     return Scaffold(
@@ -22,51 +20,44 @@ class ReportsDesktop extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '📄 Relatórios',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            Text('📄 Relatórios', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 30),
 
             Row(
               children: [
-                _buildCard(
-                  'Total de Itens',
-                  total.toString(),
-                  Icons.swap_horiz,
-                  SimpTheme.azul,
-                ),
+                _buildCard('Total de Itens', total.toString(), Icons.swap_horiz, SimpTheme.azul),
                 const SizedBox(width: 16),
-                _buildCard(
-                  'Itens Atrasados',
-                  atrasados.toString(),
-                  Icons.warning,
-                  SimpTheme.vermelho,
-                ),
+                _buildCard('Itens Atrasados', atrasados.toString(), Icons.warning, SimpTheme.vermelho),
               ],
             ),
             const SizedBox(height: 30),
 
-            const Text(
-              'Histórico de Itens',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            // Botão de Exportar PDF
+            ElevatedButton.icon(
+              icon: const Icon(Icons.picture_as_pdf),
+              label: const Text('Exportar Relatório em PDF'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: SimpTheme.vermelho,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('PDF gerado com sucesso! (em breve)')),
+                );
+              },
             ),
+            const SizedBox(height: 30),
+
+            const Text('Histórico de Itens', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             Expanded(
               child: ListView.builder(
                 itemCount: provider.itens.length,
                 itemBuilder: (context, i) {
                   final item = provider.itens[i];
-                  final atrasado =
-                      item.dataLimite != null &&
-                      item.dataLimite!.isBefore(DateTime.now());
                   return ListTile(
                     title: Text(item.nome),
-                    subtitle: Text(
-                      '${item.solicitante} • ${item.quantidade} un',
-                    ),
-                    trailing: atrasado
-                        ? const Icon(Icons.warning, color: Colors.red)
-                        : const Icon(Icons.check_circle, color: Colors.green),
+                    subtitle: Text('${item.solicitante} • ${item.quantidade} un'),
+                    trailing: _buildStatusIcon(item),
                   );
                 },
               ),
@@ -82,15 +73,19 @@ class ReportsDesktop extends StatelessWidget {
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Icon(icon, size: 40, color: cor),
-              Text(valor, style: const TextStyle(fontSize: 32)),
-              Text(titulo),
-            ],
-          ),
+          child: Column(children: [Icon(icon, size: 40, color: cor), Text(valor, style: const TextStyle(fontSize: 32)), Text(titulo)]),
         ),
       ),
     );
+  }
+
+  Widget _buildStatusIcon(Item item) {
+    if (item.status == 'concluido') {
+      return const Icon(Icons.check_circle, color: Colors.green);
+    } else if (item.dataLimite != null && item.dataLimite!.isBefore(DateTime.now())) {
+      return const Icon(Icons.warning, color: Colors.red);
+    } else {
+      return const Icon(Icons.access_time, color: Colors.grey);
+    }
   }
 }
