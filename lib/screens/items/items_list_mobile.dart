@@ -20,7 +20,12 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
     final itens = itemProvider.itens;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Itens Cadastrados')),
+      appBar: AppBar(
+        title: const Text(
+          'Itens Cadastrados',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
       body: Column(
         children: [
           Padding(

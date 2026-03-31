@@ -31,7 +31,7 @@ class DashboardMobile extends StatelessWidget {
             .length;
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Dashboard')),
+          appBar: AppBar(title: const Text('Dashboard', style: TextStyle(color: Colors.white),)),
           body: Padding(
             padding: const EdgeInsets.all(16),
             child: ListView(

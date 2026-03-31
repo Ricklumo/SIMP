@@ -25,7 +25,12 @@ class ReportsMobile extends StatelessWidget {
             .length;
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Relatórios')),
+          appBar: AppBar(
+            title: const Text(
+              'Relatórios',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
           body: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -44,8 +49,11 @@ class ReportsMobile extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 ElevatedButton.icon(
-                  icon: const Icon(Icons.picture_as_pdf),
-                  label: const Text('Exportar PDF'),
+                  icon: const Icon(Icons.picture_as_pdf, color: Colors.black),
+                  label: const Text(
+                    'Exportar PDF',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: SimpTheme.vermelho,
                   ),

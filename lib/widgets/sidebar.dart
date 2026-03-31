@@ -18,9 +18,9 @@ class Sidebar extends StatelessWidget {
       color: SimpTheme.azul,
       child: Column(
         children: [
-          const SizedBox(height: 10),
-          Image.asset('assets/logo_simp_transparente.png', height: 150),
-          const SizedBox(height: 40),
+          const SizedBox(height: 60),
+          Image.asset('assets/logo_simp_transparente.png', height: 200,),
+          const SizedBox(height: 70),
           _buildItem(Icons.dashboard, 'Dashboard', 0),
           _buildItem(Icons.add_circle, 'Novo Item', 1),
           _buildItem(Icons.inventory, 'Itens', 2),

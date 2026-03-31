@@ -21,7 +21,7 @@ class _AddItemMobileState extends State<AddItemMobile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Novo Item')),
+      appBar: AppBar(title: const Text('Novo Item', style: TextStyle(color: Colors.white))),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(

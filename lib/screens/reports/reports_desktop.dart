@@ -56,8 +56,11 @@ class ReportsDesktop extends StatelessWidget {
                 const SizedBox(height: 30),
 
                 ElevatedButton.icon(
-                  icon: const Icon(Icons.picture_as_pdf),
-                  label: const Text('Exportar Relatório em PDF'),
+                  icon: const Icon(Icons.picture_as_pdf, color: Colors.black),
+                  label: const Text(
+                    'Exportar Relatório em PDF',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: SimpTheme.vermelho,
                     padding: const EdgeInsets.symmetric(
