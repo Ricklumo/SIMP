@@ -11,8 +11,25 @@ class DashboardDesktop extends StatelessWidget {
     return Consumer<ItemProvider>(
       builder: (context, provider, child) {
         final total = provider.itens.length;
+
+        // Atrasados = NÃO concluído E data já passou
         final atrasados = provider.itens
-            .where((i) => i.dataLimite != null && i.dataLimite!.isBefore(DateTime.now()))
+            .where(
+              (i) =>
+                  i.status != 'concluido' &&
+                  i.dataLimite != null &&
+                  i.dataLimite!.isBefore(DateTime.now()),
+            )
+            .length;
+
+        // Pendentes = NÃO concluído E (data futura ou sem data)
+        final pendentes = provider.itens
+            .where(
+              (i) =>
+                  i.status != 'concluido' &&
+                  (i.dataLimite == null ||
+                      !i.dataLimite!.isBefore(DateTime.now())),
+            )
             .length;
 
         return Scaffold(
@@ -21,16 +38,34 @@ class DashboardDesktop extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('📊 Dashboard', style: Theme.of(context).textTheme.headlineMedium),
+                Text(
+                  '📊 Dashboard',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
                 const SizedBox(height: 30),
 
                 Row(
                   children: [
-                    _buildCard('Total de Itens', total.toString(), Icons.inventory_2, SimpTheme.azul),
+                    _buildCard(
+                      'Total de Itens',
+                      total.toString(),
+                      Icons.inventory_2,
+                      SimpTheme.azul,
+                    ),
                     const SizedBox(width: 20),
-                    _buildCard('Itens Atrasados', atrasados.toString(), Icons.warning, SimpTheme.vermelho),
+                    _buildCard(
+                      'Itens Atrasados',
+                      atrasados.toString(),
+                      Icons.warning,
+                      SimpTheme.vermelho,
+                    ),
                     const SizedBox(width: 20),
-                    _buildCard('Pendentes', (total - atrasados).toString(), Icons.pending, SimpTheme.laranja),
+                    _buildCard(
+                      'Pendentes',
+                      pendentes.toString(),
+                      Icons.pending,
+                      SimpTheme.laranja,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 30),
@@ -42,11 +77,19 @@ class DashboardDesktop extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       child: Row(
                         children: [
-                          const Icon(Icons.warning, color: Colors.red, size: 32),
+                          const Icon(
+                            Icons.warning,
+                            color: Colors.red,
+                            size: 32,
+                          ),
                           const SizedBox(width: 12),
                           Text(
                             '$atrasados itens estão ATRASADOS!',
-                            style: const TextStyle(fontSize: 20, color: Colors.red, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
                       ),
@@ -70,7 +113,13 @@ class DashboardDesktop extends StatelessWidget {
             children: [
               Icon(icon, size: 40, color: color),
               const SizedBox(height: 12),
-              Text(value, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Text(title, textAlign: TextAlign.center),
             ],
           ),

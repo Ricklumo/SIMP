@@ -11,11 +11,22 @@ class DashboardMobile extends StatelessWidget {
     return Consumer<ItemProvider>(
       builder: (context, provider, child) {
         final total = provider.itens.length;
+
         final atrasados = provider.itens
             .where(
               (i) =>
+                  i.status != 'concluido' &&
                   i.dataLimite != null &&
                   i.dataLimite!.isBefore(DateTime.now()),
+            )
+            .length;
+
+        final pendentes = provider.itens
+            .where(
+              (i) =>
+                  i.status != 'concluido' &&
+                  (i.dataLimite == null ||
+                      !i.dataLimite!.isBefore(DateTime.now())),
             )
             .length;
 
@@ -41,7 +52,7 @@ class DashboardMobile extends StatelessWidget {
                 const SizedBox(height: 12),
                 _buildCard(
                   'Pendentes',
-                  (total - atrasados).toString(),
+                  pendentes.toString(),
                   Icons.pending,
                   SimpTheme.laranja,
                 ),
