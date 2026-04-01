@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // ← novo
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:simp/core/providers.dart';
 import 'package:simp/core/theme.dart';
@@ -23,19 +23,20 @@ class SidebarMobile extends StatelessWidget {
           _buildItem(context, Icons.dashboard, 'Dashboard', 0),
           _buildItem(context, Icons.add_circle_outline, 'Novo Item', 1),
           _buildItem(context, Icons.inventory_2, 'Itens Cadastrados', 2),
-          _buildItem(context, Icons.history, 'Relatórios', 3),
-          _buildItem(context, Icons.logout, 'Sair', 4),
+          _buildItem(context, Icons.people, 'Usuários', 3),           // ← NOVO
+          _buildItem(context, Icons.history, 'Relatórios', 4),        // ← Relatórios agora é 4
+          _buildItem(context, Icons.logout, 'Sair', 5),               // ← Sair agora é 5
         ],
       ),
     );
   }
 
   Widget _buildItem(
-    BuildContext context,
-    IconData icon,
-    String title,
-    int index,
-  ) {
+      BuildContext context,
+      IconData icon,
+      String title,
+      int index,
+      ) {
     return ListTile(
       leading: Icon(icon, color: Colors.white, size: 28),
       title: Text(
@@ -47,7 +48,7 @@ class SidebarMobile extends StatelessWidget {
         ),
       ),
       onTap: () {
-        if (index == 4) {
+        if (index == 5) {                    // ← mudou de 4 para 5
           _showSairDialog(context);
         } else {
           final nav = Provider.of<NavigationProvider>(context, listen: false);

@@ -16,8 +16,9 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2, // ← aumentamos a versão
+      version: 3,                    // ← Aumentamos para versão 3
       onCreate: (db, version) async {
+        // Tabela de ITENS (já existia)
         await db.execute('''
           CREATE TABLE itens (
             id TEXT PRIMARY KEY,
@@ -30,12 +31,29 @@ class DatabaseHelper {
             status TEXT DEFAULT 'pendente'
           )
         ''');
+
+        // NOVA TABELA: USUÁRIOS / INSTRUTORES
+        await db.execute('''
+          CREATE TABLE usuarios (
+            id TEXT PRIMARY KEY,
+            nome TEXT NOT NULL,
+            matricula TEXT UNIQUE NOT NULL,
+            email TEXT,
+            telefone TEXT
+          )
+        ''');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) {
-          await db.execute(
-            'ALTER TABLE itens ADD COLUMN status TEXT DEFAULT "pendente"',
-          );
+        if (oldVersion < 3) {
+          await db.execute('''
+            CREATE TABLE usuarios (
+              id TEXT PRIMARY KEY,
+              nome TEXT NOT NULL,
+              matricula TEXT UNIQUE NOT NULL,
+              email TEXT,
+              telefone TEXT
+            )
+          ''');
         }
       },
     );

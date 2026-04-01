@@ -19,12 +19,14 @@ class Sidebar extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 60),
-          Image.asset('assets/logo_simp_transparente.png', height: 200,),
+          Image.asset('assets/logo_simp_transparente.png', height: 200),
           const SizedBox(height: 70),
+
           _buildItem(Icons.dashboard, 'Dashboard', 0),
           _buildItem(Icons.add_circle, 'Novo Item', 1),
           _buildItem(Icons.inventory, 'Itens', 2),
-          _buildItem(Icons.history, 'Relatórios', 3),
+          _buildItem(Icons.people, 'Usuários', 3),        // ← NOVO
+          _buildItem(Icons.history, 'Relatórios', 4),      // ← Relatórios agora é 4
         ],
       ),
     );
