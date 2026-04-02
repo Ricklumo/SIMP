@@ -16,8 +16,12 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
 
   @override
   Widget build(BuildContext context) {
-    final itemProvider = Provider.of<ItemProvider>(context);
-    final itens = itemProvider.itens;
+    final provider = Provider.of<ItemProvider>(context);
+    final filteredItens = provider.itens.where((item) {
+      final query = search.toLowerCase();
+      return item.nome.toLowerCase().contains(query) ||
+          item.solicitante.toLowerCase().contains(query);
+    }).toList();
 
     return Scaffold(
       body: Padding(
@@ -26,12 +30,13 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
           children: [
             TextField(
               decoration: const InputDecoration(
-                labelText: 'Buscar item...',
+                labelText: 'Buscar por item, matrícula ou instrutor...',
                 prefixIcon: Icon(Icons.search),
               ),
               onChanged: (v) => setState(() => search = v),
             ),
             const SizedBox(height: 20),
+
             Expanded(
               child: SingleChildScrollView(
                 child: DataTable(
@@ -43,14 +48,11 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
                     DataColumn(label: Text('Status')),
                     DataColumn(label: Text('Ações')),
                   ],
-                  rows: itens
-                      .where(
-                        (item) => item.nome.toLowerCase().contains(
-                          search.toLowerCase(),
-                        ),
-                      )
+                  rows: filteredItens
                       .map(
                         (item) => DataRow(
+                          onSelectChanged: (_) =>
+                              _showItemDetails(context, item),
                           cells: [
                             DataCell(Text(item.nome)),
                             DataCell(Text(item.quantidade.toString())),
@@ -132,6 +134,42 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
     } else {
       return const Chip(label: Text('Pendente'), backgroundColor: Colors.grey);
     }
+  }
+
+  void _showItemDetails(BuildContext context, Item item) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(item.nome),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Solicitante: ${item.solicitante}'),
+            const SizedBox(height: 8),
+            Text(
+              'Data Limite: ${item.dataLimite != null ? '${item.dataLimite!.day}/${item.dataLimite!.month}/${item.dataLimite!.year}' : 'Sem data'}',
+            ),
+            const SizedBox(height: 8),
+            Text('Quantidade: ${item.quantidade}'),
+            const SizedBox(height: 8),
+            Text(
+              'Observação: ${item.observacao.isEmpty ? 'Nenhuma' : item.observacao}',
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Status: ${item.status == 'concluido' ? 'Concluído' : 'Pendente'}',
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _toggleStatus(BuildContext context, Item item) async {

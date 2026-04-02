@@ -8,6 +8,7 @@ import '../dashboard/dashboard.dart';
 import '../items/add_item.dart';
 import '../items/items_list.dart';
 import '../reports/reports.dart';
+import '../users/add_user.dart'; // ← Import da tela de usuários
 
 class HomeMobile extends StatefulWidget {
   const HomeMobile({super.key});
@@ -21,6 +22,7 @@ class _HomeMobileState extends State<HomeMobile> {
   void initState() {
     super.initState();
     Provider.of<ItemProvider>(context, listen: false).carregarItens();
+    Provider.of<ItemProvider>(context, listen: false).carregarUsers();
   }
 
   @override
@@ -28,10 +30,11 @@ class _HomeMobileState extends State<HomeMobile> {
     final nav = Provider.of<NavigationProvider>(context);
 
     final List<Widget> pages = [
-      const DashboardScreen(),
-      const AddItemScreen(),
-      ItemsListScreen(),
-      const ReportsScreen(),
+      const DashboardScreen(), // 0
+      const AddItemScreen(), // 1
+      ItemsListScreen(), // 2
+      const AddUserScreen(), // 3 ← Usuários
+      const ReportsScreen(), // 4 ← Relatórios
     ];
 
     return Scaffold(

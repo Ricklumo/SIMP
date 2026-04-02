@@ -15,11 +15,13 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
   String categoria = 'Fios';
   int quantidade = 1;
   DateTime? dataLimite;
-  String solicitante = '';
+  String? solicitante; // ← agora é o nome do usuário selecionado
   String observacao = '';
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<ItemProvider>(context);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(32),
@@ -87,9 +89,22 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
             ),
             const SizedBox(height: 16),
 
-            TextFormField(
+            // === NOVO DROPDOWN DE SOLICITANTE ===
+            DropdownButtonFormField<User>(
+              value: null,
+              hint: const Text('Selecione o Solicitante'),
+              items: userProvider.users.map((user) {
+                return DropdownMenuItem<User>(
+                  value: user,
+                  child: Text('${user.nome} (${user.matricula})'),
+                );
+              }).toList(),
+              onChanged: (User? user) {
+                setState(() {
+                  solicitante = user?.nome;
+                });
+              },
               decoration: const InputDecoration(labelText: 'Solicitante'),
-              onChanged: (v) => solicitante = v,
             ),
             const SizedBox(height: 16),
 
@@ -109,8 +124,16 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () async {
-                  // ← ASYNC AQUI
-                  if (nome.trim().isEmpty) return;
+                  if (nome.trim().isEmpty || solicitante == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Preencha o nome e selecione o solicitante',
+                        ),
+                      ),
+                    );
+                    return;
+                  }
 
                   final item = Item(
                     id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -118,14 +141,14 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
                     categoria: categoria,
                     quantidade: quantidade,
                     dataLimite: dataLimite,
-                    solicitante: solicitante,
+                    solicitante: solicitante!, // ← agora vem do dropdown
                     observacao: observacao,
                   );
 
                   await Provider.of<ItemProvider>(
                     context,
                     listen: false,
-                  ).adicionarItem(item); // ← await
+                  ).adicionarItem(item);
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -139,7 +162,7 @@ class _AddItemDesktopState extends State<AddItemDesktop> {
                     categoria = 'Fios';
                     quantidade = 1;
                     dataLimite = null;
-                    solicitante = '';
+                    solicitante = null;
                     observacao = '';
                   });
                 },

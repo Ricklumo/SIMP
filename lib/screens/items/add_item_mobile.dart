@@ -15,13 +15,15 @@ class _AddItemMobileState extends State<AddItemMobile> {
   String categoria = 'Fios';
   int quantidade = 1;
   DateTime? dataLimite;
-  String solicitante = '';
+  String? solicitante;
   String observacao = '';
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<ItemProvider>(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Novo Item', style: TextStyle(color: Colors.white))),
+      appBar: AppBar(title: const Text('Novo Item')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
@@ -71,9 +73,18 @@ class _AddItemMobileState extends State<AddItemMobile> {
             ),
             const SizedBox(height: 12),
 
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Solicitante'),
-              onChanged: (v) => solicitante = v,
+            // === DROPDOWN DE SOLICITANTE ===
+            DropdownButtonFormField<User>(
+              hint: const Text('Selecione o Solicitante'),
+              items: userProvider.users.map((user) {
+                return DropdownMenuItem<User>(
+                  value: user,
+                  child: Text('${user.nome} (${user.matricula})'),
+                );
+              }).toList(),
+              onChanged: (User? user) {
+                setState(() => solicitante = user?.nome);
+              },
             ),
             const SizedBox(height: 12),
 
@@ -91,8 +102,16 @@ class _AddItemMobileState extends State<AddItemMobile> {
                 minimumSize: const Size(double.infinity, 50),
               ),
               onPressed: () async {
-                // ← ASYNC AQUI
-                if (nome.trim().isEmpty) return;
+                if (nome.trim().isEmpty || solicitante == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Preencha o nome e selecione o solicitante',
+                      ),
+                    ),
+                  );
+                  return;
+                }
 
                 final item = Item(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -100,14 +119,14 @@ class _AddItemMobileState extends State<AddItemMobile> {
                   categoria: categoria,
                   quantidade: quantidade,
                   dataLimite: dataLimite,
-                  solicitante: solicitante,
+                  solicitante: solicitante!,
                   observacao: observacao,
                 );
 
                 await Provider.of<ItemProvider>(
                   context,
                   listen: false,
-                ).adicionarItem(item); // ← await
+                ).adicionarItem(item);
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -121,7 +140,7 @@ class _AddItemMobileState extends State<AddItemMobile> {
                   categoria = 'Fios';
                   quantidade = 1;
                   dataLimite = null;
-                  solicitante = '';
+                  solicitante = null;
                   observacao = '';
                 });
               },
