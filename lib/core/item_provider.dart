@@ -67,27 +67,31 @@ class Item {
 // ==================== PROVIDER ====================
 class ItemProvider extends ChangeNotifier {
   final List<Item> _itens = [];
-  final List<User> _users = [];   // ← NOVO: lista de usuários
+  final List<User> _users = [];
 
   List<Item> get itens => _itens;
-  List<User> get users => _users; // ← NOVO
+  List<User> get users => _users;
 
-  // ==================== MÉTODOS DE ITENS (mantidos) ====================
+  // ==================== MÉTODOS DE ITENS ====================
   Future<void> carregarItens() async {
     final db = await DatabaseHelper.database;
     final maps = await db.query('itens');
     _itens.clear();
     for (var map in maps) {
-      _itens.add(Item(
-        id: map['id'] as String,
-        nome: map['nome'] as String,
-        categoria: map['categoria'] as String,
-        quantidade: map['quantidade'] as int,
-        dataLimite: map['dataLimite'] != null ? DateTime.parse(map['dataLimite'] as String) : null,
-        solicitante: map['solicitante'] as String,
-        observacao: map['observacao'] as String,
-        status: map['status'] as String? ?? 'pendente',
-      ));
+      _itens.add(
+        Item(
+          id: map['id'] as String,
+          nome: map['nome'] as String,
+          categoria: map['categoria'] as String,
+          quantidade: map['quantidade'] as int,
+          dataLimite: map['dataLimite'] != null
+              ? DateTime.parse(map['dataLimite'] as String)
+              : null,
+          solicitante: map['solicitante'] as String,
+          observacao: map['observacao'] as String,
+          status: map['status'] as String? ?? 'pendente',
+        ),
+      );
     }
     notifyListeners();
   }
@@ -100,13 +104,23 @@ class ItemProvider extends ChangeNotifier {
 
   Future<void> atualizarItem(Item item) async {
     final db = await DatabaseHelper.database;
-    await db.update('itens', item.toMap(), where: 'id = ?', whereArgs: [item.id]);
+    await db.update(
+      'itens',
+      item.toMap(),
+      where: 'id = ?',
+      whereArgs: [item.id],
+    );
     await carregarItens();
   }
 
   Future<void> atualizarStatus(String id, String novoStatus) async {
     final db = await DatabaseHelper.database;
-    await db.update('itens', {'status': novoStatus}, where: 'id = ?', whereArgs: [id]);
+    await db.update(
+      'itens',
+      {'status': novoStatus},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
     await carregarItens();
   }
 
@@ -116,19 +130,21 @@ class ItemProvider extends ChangeNotifier {
     await carregarItens();
   }
 
-  // ==================== NOVOS MÉTODOS PARA USUÁRIOS ====================
+  // ==================== MÉTODOS DE USUÁRIOS ====================
   Future<void> carregarUsers() async {
     final db = await DatabaseHelper.database;
     final maps = await db.query('usuarios');
     _users.clear();
     for (var map in maps) {
-      _users.add(User(
-        id: map['id'] as String,
-        nome: map['nome'] as String,
-        matricula: map['matricula'] as String,
-        email: map['email'] as String?,
-        telefone: map['telefone'] as String?,
-      ));
+      _users.add(
+        User(
+          id: map['id'] as String,
+          nome: map['nome'] as String,
+          matricula: map['matricula'] as String,
+          email: map['email'] as String?,
+          telefone: map['telefone'] as String?,
+        ),
+      );
     }
     notifyListeners();
   }
@@ -136,6 +152,12 @@ class ItemProvider extends ChangeNotifier {
   Future<void> adicionarUser(User user) async {
     final db = await DatabaseHelper.database;
     await db.insert('usuarios', user.toMap());
+    await carregarUsers();
+  }
+
+  Future<void> deletarUser(String id) async {
+    final db = await DatabaseHelper.database;
+    await db.delete('usuarios', where: 'id = ?', whereArgs: [id]);
     await carregarUsers();
   }
 }

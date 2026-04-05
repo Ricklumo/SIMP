@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simp/core/item_provider.dart';
+import 'package:simp/core/theme.dart';
 
 class AddUserDesktop extends StatefulWidget {
   const AddUserDesktop({super.key});
@@ -19,6 +20,13 @@ class _AddUserDesktopState extends State<AddUserDesktop> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Novo Usuário / Instrutor'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(32),
         child: Form(
@@ -26,32 +34,23 @@ class _AddUserDesktopState extends State<AddUserDesktop> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '👤 Novo Usuário / Instrutor',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 30),
-
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Nome completo'),
                 onChanged: (v) => nome = v,
                 validator: (v) => v!.isEmpty ? 'Campo obrigatório' : null,
               ),
               const SizedBox(height: 16),
-
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Matrícula'),
                 onChanged: (v) => matricula = v,
                 validator: (v) => v!.isEmpty ? 'Campo obrigatório' : null,
               ),
               const SizedBox(height: 16),
-
               TextFormField(
                 decoration: const InputDecoration(labelText: 'E-mail'),
                 onChanged: (v) => email = v,
               ),
               const SizedBox(height: 16),
-
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Telefone'),
                 onChanged: (v) => telefone = v,
@@ -84,13 +83,7 @@ class _AddUserDesktopState extends State<AddUserDesktop> {
                         ),
                       );
 
-                      // Limpa o formulário
-                      setState(() {
-                        nome = '';
-                        matricula = '';
-                        email = '';
-                        telefone = '';
-                      });
+                      Navigator.pop(context); // ← Volta automaticamente
                     }
                   },
                   child: const Text(

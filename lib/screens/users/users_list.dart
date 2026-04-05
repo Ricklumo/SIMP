@@ -11,7 +11,7 @@ class UsersScreen extends StatelessWidget {
     return Consumer<ItemProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Usuários / Instrutores')),
+          appBar: AppBar(title: const Text('Usuários / Instrutores'), backgroundColor: Colors.white,),
           floatingActionButton: FloatingActionButton(
             onPressed: () => Navigator.push(
               context,
@@ -74,7 +74,7 @@ class UsersScreen extends StatelessWidget {
               await Provider.of<ItemProvider>(
                 context,
                 listen: false,
-              ).deletarUser(id); // vamos criar este metodo no próximo passo
+              ).deletarUser(id);
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(const SnackBar(content: Text('Usuário excluído')));

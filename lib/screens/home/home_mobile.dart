@@ -8,7 +8,8 @@ import '../dashboard/dashboard.dart';
 import '../items/add_item.dart';
 import '../items/items_list.dart';
 import '../reports/reports.dart';
-import '../users/add_user.dart'; // ← Import da tela de usuários
+import '../users/users_list.dart'; // ← Tela de listagem
+import '../users/add_user.dart'; // ← Tela de cadastro
 
 class HomeMobile extends StatefulWidget {
   const HomeMobile({super.key});
@@ -33,8 +34,8 @@ class _HomeMobileState extends State<HomeMobile> {
       const DashboardScreen(), // 0
       const AddItemScreen(), // 1
       ItemsListScreen(), // 2
-      const AddUserScreen(), // 3 ← Usuários
-      const ReportsScreen(), // 4 ← Relatórios
+      const UsersScreen(), // 3 ← Agora abre a listagem
+      const ReportsScreen(), // 4
     ];
 
     return Scaffold(
