@@ -21,7 +21,7 @@ class _AddUserDesktopState extends State<AddUserDesktop> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Novo Usuário / Instrutor'),
+        title: const Text('Novo Usuário / Instrutor', style: TextStyle(color: Colors.white),),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),

@@ -36,7 +36,6 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
               onChanged: (v) => setState(() => search = v),
             ),
             const SizedBox(height: 20),
-
             Expanded(
               child: SingleChildScrollView(
                 child: DataTable(
@@ -212,8 +211,13 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
   void _editItem(BuildContext context, Item item) {
     final nomeCtrl = TextEditingController(text: item.nome);
     final qtdCtrl = TextEditingController(text: item.quantidade.toString());
-    final solicitanteCtrl = TextEditingController(text: item.solicitante);
     final obsCtrl = TextEditingController(text: item.observacao);
+
+    final provider = Provider.of<ItemProvider>(context, listen: false);
+    User? selectedUser = provider.users.cast<User?>().firstWhere(
+      (u) => u?.nome == item.solicitante,
+      orElse: () => null,
+    );
 
     showDialog(
       context: context,
@@ -232,10 +236,21 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Quantidade'),
               ),
-              TextField(
-                controller: solicitanteCtrl,
-                decoration: const InputDecoration(labelText: 'Solicitante'),
+
+              DropdownButtonFormField<User>(
+                value: selectedUser,
+                hint: const Text('Selecione o Solicitante'),
+                items: provider.users.map((user) {
+                  return DropdownMenuItem<User>(
+                    value: user,
+                    child: Text('${user.nome} (${user.matricula})'),
+                  );
+                }).toList(),
+                onChanged: (User? user) {
+                  selectedUser = user;
+                },
               ),
+
               TextField(
                 controller: obsCtrl,
                 decoration: const InputDecoration(labelText: 'Observação'),
@@ -258,7 +273,7 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
                 categoria: item.categoria,
                 quantidade: int.tryParse(qtdCtrl.text) ?? item.quantidade,
                 dataLimite: item.dataLimite,
-                solicitante: solicitanteCtrl.text,
+                solicitante: selectedUser?.nome ?? item.solicitante,
                 observacao: obsCtrl.text,
                 status: item.status,
               );

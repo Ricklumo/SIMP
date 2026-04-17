@@ -16,16 +16,11 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
 
   @override
   Widget build(BuildContext context) {
-    final itemProvider = Provider.of<ItemProvider>(context);
-    final itens = itemProvider.itens;
+    final provider = Provider.of<ItemProvider>(context);
+    final itens = provider.itens;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Itens Cadastrados',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      appBar: AppBar(title: const Text('Itens Cadastrados')),
       body: Column(
         children: [
           Padding(
@@ -59,6 +54,8 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
                     subtitle: Text(
                       '${item.solicitante} • ${item.quantidade} un',
                     ),
+                    onTap: () =>
+                        _showItemDetails(context, item), // ← linha clicável
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -87,6 +84,42 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
                 );
               },
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showItemDetails(BuildContext context, Item item) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(item.nome),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Solicitante: ${item.solicitante}'),
+            const SizedBox(height: 8),
+            Text(
+              'Data Limite: ${item.dataLimite != null ? '${item.dataLimite!.day}/${item.dataLimite!.month}/${item.dataLimite!.year}' : 'Sem data'}',
+            ),
+            const SizedBox(height: 8),
+            Text('Quantidade: ${item.quantidade}'),
+            const SizedBox(height: 8),
+            Text(
+              'Observação: ${item.observacao.isEmpty ? 'Nenhuma' : item.observacao}',
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Status: ${item.status == 'concluido' ? 'Concluído' : 'Pendente'}',
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Fechar'),
           ),
         ],
       ),
@@ -133,8 +166,13 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
   void _editItem(BuildContext context, Item item) {
     final nomeCtrl = TextEditingController(text: item.nome);
     final qtdCtrl = TextEditingController(text: item.quantidade.toString());
-    final solicitanteCtrl = TextEditingController(text: item.solicitante);
     final obsCtrl = TextEditingController(text: item.observacao);
+
+    final provider = Provider.of<ItemProvider>(context, listen: false);
+    User? selectedUser = provider.users.cast<User?>().firstWhere(
+      (u) => u?.nome == item.solicitante,
+      orElse: () => null,
+    );
 
     showDialog(
       context: context,
@@ -153,10 +191,21 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Quantidade'),
               ),
-              TextField(
-                controller: solicitanteCtrl,
-                decoration: const InputDecoration(labelText: 'Solicitante'),
+
+              DropdownButtonFormField<User>(
+                value: selectedUser,
+                hint: const Text('Selecione o Solicitante'),
+                items: provider.users.map((user) {
+                  return DropdownMenuItem<User>(
+                    value: user,
+                    child: Text('${user.nome} (${user.matricula})'),
+                  );
+                }).toList(),
+                onChanged: (User? user) {
+                  selectedUser = user;
+                },
               ),
+
               TextField(
                 controller: obsCtrl,
                 decoration: const InputDecoration(labelText: 'Observação'),
@@ -179,7 +228,7 @@ class _ItemsListMobileState extends State<ItemsListMobile> {
                 categoria: item.categoria,
                 quantidade: int.tryParse(qtdCtrl.text) ?? item.quantidade,
                 dataLimite: item.dataLimite,
-                solicitante: solicitanteCtrl.text,
+                solicitante: selectedUser?.nome ?? item.solicitante,
                 observacao: obsCtrl.text,
                 status: item.status,
               );
