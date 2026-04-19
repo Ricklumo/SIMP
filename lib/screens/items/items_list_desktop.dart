@@ -36,77 +36,45 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
               onChanged: (v) => setState(() => search = v),
             ),
             const SizedBox(height: 20),
+
+            // === ROLAGEM HORIZONTAL PARA EVITAR OVERFLOW ===
             Expanded(
               child: SingleChildScrollView(
-                child: DataTable(
-                  columns: const [
-                    DataColumn(label: Text('Item')),
-                    DataColumn(label: Text('Qtd')),
-                    DataColumn(label: Text('Data Limite')),
-                    DataColumn(label: Text('Solicitante')),
-                    DataColumn(label: Text('Status')),
-                    DataColumn(label: Text('Ações')),
-                  ],
-                  rows: filteredItens
-                      .map(
-                        (item) => DataRow(
-                          onSelectChanged: (_) =>
-                              _showItemDetails(context, item),
-                          cells: [
-                            DataCell(Text(item.nome)),
-                            DataCell(Text(item.quantidade.toString())),
-                            DataCell(
-                              Text(
-                                item.dataLimite != null
-                                    ? '${item.dataLimite!.day}/${item.dataLimite!.month}/${item.dataLimite!.year}'
-                                    : 'Sem data',
-                              ),
-                            ),
-                            DataCell(Text(item.solicitante)),
-                            DataCell(_buildStatusChip(item)),
-                            DataCell(
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: Colors.blue,
-                                    ),
-                                    onPressed: () => _editItem(context, item),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.check_circle,
-                                      color: Colors.green,
-                                    ),
-                                    onPressed: () =>
-                                        _toggleStatus(context, item),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () =>
-                                        _deleteItem(context, item.id),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.qr_code,
-                                      color: Colors.orange,
-                                      size: 28,
-                                    ),
-                                    onPressed: () =>
-                                        _showQRDialog(context, item),
-                                  ),
-                                ],
-                              ),
-                            ),
+                scrollDirection: Axis.horizontal,   // ← rolagem lateral
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: DataTable(
+                    columnSpacing: 20,
+                    columns: const [
+                      DataColumn(label: Text('Item')),
+                      DataColumn(label: Text('Qtd')),
+                      DataColumn(label: Text('Data Limite')),
+                      DataColumn(label: Text('Solicitante')),
+                      DataColumn(label: Text('Status')),
+                      DataColumn(label: Text('Ações')),
+                    ],
+                    rows: filteredItens.map((item) => DataRow(
+                      onSelectChanged: (_) => _showItemDetails(context, item),
+                      cells: [
+                        DataCell(Text(item.nome)),
+                        DataCell(Text(item.quantidade.toString())),
+                        DataCell(Text(item.dataLimite != null
+                            ? '${item.dataLimite!.day}/${item.dataLimite!.month}/${item.dataLimite!.year}'
+                            : 'Sem data')),
+                        DataCell(Text(item.solicitante)),
+                        DataCell(_buildStatusChip(item)),
+                        DataCell(Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () => _editItem(context, item)),
+                            IconButton(icon: const Icon(Icons.check_circle, color: Colors.green), onPressed: () => _toggleStatus(context, item)),
+                            IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => _deleteItem(context, item.id)),
+                            IconButton(icon: const Icon(Icons.qr_code, color: Colors.orange, size: 28), onPressed: () => _showQRDialog(context, item)),
                           ],
-                        ),
-                      )
-                      .toList(),
+                        )),
+                      ],
+                    )).toList(),
+                  ),
                 ),
               ),
             ),
@@ -118,18 +86,9 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
 
   Widget _buildStatusChip(Item item) {
     if (item.status == 'concluido') {
-      return const Chip(
-        label: Text('Concluído'),
-        backgroundColor: Colors.green,
-        labelStyle: TextStyle(color: Colors.white),
-      );
-    } else if (item.dataLimite != null &&
-        item.dataLimite!.isBefore(DateTime.now())) {
-      return const Chip(
-        label: Text('Atrasado'),
-        backgroundColor: Colors.red,
-        labelStyle: TextStyle(color: Colors.white),
-      );
+      return const Chip(label: Text('Concluído'), backgroundColor: Colors.green, labelStyle: TextStyle(color: Colors.white));
+    } else if (item.dataLimite != null && item.dataLimite!.isBefore(DateTime.now())) {
+      return const Chip(label: Text('Atrasado'), backgroundColor: Colors.red, labelStyle: TextStyle(color: Colors.white));
     } else {
       return const Chip(label: Text('Pendente'), backgroundColor: Colors.grey);
     }
@@ -146,26 +105,17 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
           children: [
             Text('Solicitante: ${item.solicitante}'),
             const SizedBox(height: 8),
-            Text(
-              'Data Limite: ${item.dataLimite != null ? '${item.dataLimite!.day}/${item.dataLimite!.month}/${item.dataLimite!.year}' : 'Sem data'}',
-            ),
+            Text('Data Limite: ${item.dataLimite != null ? '${item.dataLimite!.day}/${item.dataLimite!.month}/${item.dataLimite!.year}' : 'Sem data'}'),
             const SizedBox(height: 8),
             Text('Quantidade: ${item.quantidade}'),
             const SizedBox(height: 8),
-            Text(
-              'Observação: ${item.observacao.isEmpty ? 'Nenhuma' : item.observacao}',
-            ),
+            Text('Observação: ${item.observacao.isEmpty ? 'Nenhuma' : item.observacao}'),
             const SizedBox(height: 8),
-            Text(
-              'Status: ${item.status == 'concluido' ? 'Concluído' : 'Pendente'}',
-            ),
+            Text('Status: ${item.status == 'concluido' ? 'Concluído' : 'Pendente'}'),
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Fechar'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fechar')),
         ],
       ),
     );
@@ -173,10 +123,7 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
 
   void _toggleStatus(BuildContext context, Item item) async {
     final novoStatus = item.status == 'concluido' ? 'pendente' : 'concluido';
-    await Provider.of<ItemProvider>(
-      context,
-      listen: false,
-    ).atualizarStatus(item.id, novoStatus);
+    await Provider.of<ItemProvider>(context, listen: false).atualizarStatus(item.id, novoStatus);
   }
 
   void _deleteItem(BuildContext context, String id) {
@@ -186,20 +133,12 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
         title: const Text('Excluir Item'),
         content: const Text('Tem certeza que deseja excluir este item?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
           TextButton(
             onPressed: () async {
               Navigator.pop(ctx);
-              await Provider.of<ItemProvider>(
-                context,
-                listen: false,
-              ).deletarItem(id);
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Item excluído')));
+              await Provider.of<ItemProvider>(context, listen: false).deletarItem(id);
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item excluído')));
             },
             child: const Text('Excluir', style: TextStyle(color: Colors.red)),
           ),
@@ -215,7 +154,7 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
 
     final provider = Provider.of<ItemProvider>(context, listen: false);
     User? selectedUser = provider.users.cast<User?>().firstWhere(
-      (u) => u?.nome == item.solicitante,
+          (u) => u?.nome == item.solicitante,
       orElse: () => null,
     );
 
@@ -227,16 +166,8 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: nomeCtrl,
-                decoration: const InputDecoration(labelText: 'Nome'),
-              ),
-              TextField(
-                controller: qtdCtrl,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Quantidade'),
-              ),
-
+              TextField(controller: nomeCtrl, decoration: const InputDecoration(labelText: 'Nome')),
+              TextField(controller: qtdCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Quantidade')),
               DropdownButtonFormField<User>(
                 value: selectedUser,
                 hint: const Text('Selecione o Solicitante'),
@@ -246,24 +177,14 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
                     child: Text('${user.nome} (${user.matricula})'),
                   );
                 }).toList(),
-                onChanged: (User? user) {
-                  selectedUser = user;
-                },
+                onChanged: (User? user) => selectedUser = user,
               ),
-
-              TextField(
-                controller: obsCtrl,
-                decoration: const InputDecoration(labelText: 'Observação'),
-                maxLines: 2,
-              ),
+              TextField(controller: obsCtrl, decoration: const InputDecoration(labelText: 'Observação'), maxLines: 2),
             ],
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
           TextButton(
             onPressed: () async {
               Navigator.pop(ctx);
@@ -277,13 +198,8 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
                 observacao: obsCtrl.text,
                 status: item.status,
               );
-              await Provider.of<ItemProvider>(
-                context,
-                listen: false,
-              ).atualizarItem(updatedItem);
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Item atualizado!')));
+              await Provider.of<ItemProvider>(context, listen: false).atualizarItem(updatedItem);
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item atualizado!')));
             },
             child: const Text('Salvar'),
           ),
@@ -301,28 +217,15 @@ class _ItemsListDesktopState extends State<ItemsListDesktop> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'QR Code - ${item.nome}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              Text('QR Code - ${item.nome}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               Container(
                 color: Colors.white,
                 padding: const EdgeInsets.all(20),
-                child: QrImageView(
-                  data: item.id,
-                  size: 220,
-                  backgroundColor: Colors.white,
-                ),
+                child: QrImageView(data: item.id, size: 220, backgroundColor: Colors.white),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Fechar'),
-              ),
+              ElevatedButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fechar')),
             ],
           ),
         ),
